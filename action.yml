@@ -1,0 +1,32 @@
+name: Toggly CLI
+description: Install a pinned Toggly CLI and run it
+inputs:
+  version:
+    description: "CLI release version without the cli-v prefix, for example 0.2.1"
+    required: true
+  args:
+    description: "Arguments passed to toggly-cli. Quote like a shell. Do not put secrets here."
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Cache Toggly CLI
+      uses: actions/cache@v4
+      with:
+        path: ${{ runner.tool_cache }}/toggly/${{ inputs.version }}
+        key: toggly-cli-${{ inputs.version }}-${{ runner.os }}-${{ runner.arch }}
+    - name: Install Toggly CLI
+      shell: bash
+      env:
+        TOGGLY_CLI_VERSION: ${{ inputs.version }}
+        TOGGLY_INSTALL_DIR: ${{ runner.tool_cache }}/toggly/${{ inputs.version }}
+      run: |
+        if command -v python3 >/dev/null 2>&1; then PY=python3; else PY=python; fi
+        "$PY" "${{ github.action_path }}/scripts/toggly_action.py" install
+    - name: Run Toggly CLI
+      shell: bash
+      env:
+        TOGGLY_ARGS: ${{ inputs.args }}
+      run: |
+        if command -v python3 >/dev/null 2>&1; then PY=python3; else PY=python; fi
+        "$PY" "${{ github.action_path }}/scripts/toggly_action.py" run
