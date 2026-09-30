@@ -59,7 +59,7 @@ jobs:
             --environment Production
             --ci-provider github
             --run-id ${{ github.run_id }}
-            --pipeline-name ${{ github.workflow }}
+            --pipeline-name "${{ github.workflow }}"
             --branch ${{ github.ref_name }}
             --commit-sha ${{ github.sha }}
             --run-url ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
